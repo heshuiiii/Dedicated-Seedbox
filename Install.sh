@@ -2,7 +2,7 @@
 tput sgr0; clear
 
 ## Load Seedbox Components
-source <(wget -qO- https://raw.githubusercontent.com/jerry048/Seedbox-Components/main/seedbox_installation.sh)
+source <(wget -qO- https://raw.githubusercontent.com/heshuiiii/Dedicated-Seedbox/refs/heads/main/Install.sh)
 # Check if Seedbox Components is successfully loaded
 if [ $? -ne 0 ]; then
 	echo "Component ~Seedbox Components~ failed to load"
