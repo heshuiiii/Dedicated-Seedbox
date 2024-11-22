@@ -2,7 +2,7 @@
 tput sgr0; clear
 
 ## Load Seedbox Components
-source <(wget -qO- https://raw.githubusercontent.com/heshuiiii/Dedicated-Seedbox/refs/heads/main/Install.sh)
+source <(wget -qO- https://raw.githubusercontent.com/jerry048/Seedbox-Components/main/seedbox_installation.sh)
 # Check if Seedbox Components is successfully loaded
 if [ $? -ne 0 ]; then
 	echo "Component ~Seedbox Components~ failed to load"
@@ -96,6 +96,26 @@ while getopts "u:p:c:q:l:rbvx3oh" opt; do
 	p ) # process option password
 		password=${OPTARG}
 		;;
+	c ) # process option cache
+		cache=${OPTARG}
+		#Check if cache is a number
+		while true
+		do
+			if ! [[ "$cache" =~ ^-?[0-9]+$ ]]; then
+				warn "Cache must be a number"
+				need_input "Please enter a cache size (in MB):"
+				read cache
+			else
+				break
+			fi
+		done
+		#Converting the cache to qBittorrent's unit (MiB)
+		qb_cache=$cache
+		;;
+	q ) # process option cache
+		qb_install=1
+		qb_ver=("qBittorrent-${OPTARG}")
+		;;
 	l ) # process option libtorrent
 		lib_ver=("libtorrent-${OPTARG}")
 		#Check if qBittorrent version is specified
@@ -179,13 +199,14 @@ while getopts "u:p:c:q:l:rbvx3oh" opt; do
 		;;
 	h ) # process option help
 		info "Help:"
-		info "Usage: ./Install.sh -u <username> -p <password> -q <qBittorrent version> -l <libtorrent version> -b -v -r -3 -x -p"
+		info "Usage: ./Install.sh -u <username> -p <password> -c <Cache Size(unit:MiB)> -q <qBittorrent version> -l <libtorrent version> -b -v -r -3 -x -p"
 		info "Example: ./Install.sh -u jerry048 -p 1LDw39VOgors -c 3072 -q 4.3.9 -l v1.2.19 -b -v -r -3"
-		source <(wget -qO- https://raw.githubusercontent.com/heshuiiii/Dedicated-Seedbox/refs/heads/main/Install.sh)
+		source <(wget -qO- https://raw.githubusercontent.com/jerry048/Seedbox-Components/main/Torrent%20Clients/qBittorrent/qBittorrent_install.sh)
 		seperator
 		info "Options:"
 		need_input "1. -u : Username"
 		need_input "2. -p : Password"
+		# need_input "3. -c : Cache Size for qBittorrent (unit:MiB)"
 		echo -e "\n"
 		need_input "4. -q : qBittorrent version"
 		need_input "Available qBittorrent versions:"
@@ -206,7 +227,7 @@ while getopts "u:p:c:q:l:rbvx3oh" opt; do
 		;;
 	\? ) 
 		info "Help:"
-		info_2 "Usage: ./Install.sh -u <username> -p <password> -q <qBittorrent version> -l <libtorrent version> -b -v -r -3 -x -p"
+		info_2 "Usage: ./Install.sh -u <username> -p <password> -c <Cache Size(unit:MiB)> -q <qBittorrent version> -l <libtorrent version> -b -v -r -3 -x -p"
 		info_2 "Example ./Install.sh -u jerry048 -p 1LDw39VOgors -c 3072 -q 4.3.9 -l v1.2.19 -b -v -r -3"
 		exit 1
 		;;
@@ -224,7 +245,7 @@ echo -e "\n"
 
 
 # qBittorrent
-source <(wget -qO- https://raw.githubusercontent.com/heshuiiii/Dedicated-Seedbox/refs/heads/main/Install.sh)
+source <(wget -qO- https://raw.githubusercontent.com/jerry048/Seedbox-Components/main/Torrent%20Clients/qBittorrent/qBittorrent_install.sh)
 # Check if qBittorrent install is successfully loaded
 if [ $? -ne 0 ]; then
 	fail_exit "Component ~qBittorrent install~ failed to load"
@@ -254,6 +275,24 @@ if [[ ! -z "$qb_install" ]]; then
 		fi
 	fi
 	chown -R $username:$username /home/$username
+	#Check if cache is specified
+	if [ -z "$cache" ]; then
+		warn "Cache is not specified"
+		need_input "Please enter a cache size (in MB):"
+		read cache
+		#Check if cache is a number
+		while true
+		do
+			if ! [[ "$cache" =~ ^-?[0-9]+$ ]]; then
+				warn "Cache must be a number"
+				need_input "Please enter a cache size (in MB):"
+				read cache
+			else
+				break
+			fi
+		done
+		qb_cache=$cache
+	fi
 	#Check if qBittorrent version is specified
 	if [ -z "$qb_ver" ]; then
 		warn "qBittorrent version is not specified"
@@ -277,7 +316,7 @@ if [[ ! -z "$qb_install" ]]; then
 	qb_install_check
 
 	## qBittorrent install
-	install_ "install_qBittorrent_ $username $password $qb_ver $lib_ver $qb_port $qb_incoming_port" "Installing qBittorrent" "/tmp/qb_error" qb_install_success
+	install_ "install_qBittorrent_ $username $password $qb_ver $lib_ver $qb_cache $qb_port $qb_incoming_port" "Installing qBittorrent" "/tmp/qb_error" qb_install_success
 fi
 
 # autobrr Install
@@ -338,7 +377,7 @@ touch /root/.boot-script.sh && chmod +x /root/.boot-script.sh
 cat << EOF > /root/.boot-script.sh
 #!/bin/bash
 sleep 120s
-source <(wget -qO- https://raw.githubusercontent.com/heshuiiii/Dedicated-Seedbox/refs/heads/main/Install.sh)
+source <(wget -qO- https://raw.githubusercontent.com/jerry048/Seedbox-Components/main/seedbox_installation.sh)
 # Check if Seedbox Components is successfully loaded
 if [ \$? -ne 0 ]; then
 	exit 1
@@ -417,4 +456,3 @@ if [[ ! -z "$bbrv3_install_success" ]]; then
 fi
 
 exit 0
-
