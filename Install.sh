@@ -101,7 +101,7 @@ while getopts "u:p:c:q:l:rbvx3oh" opt; do
 		#Check if cache is a number
 		while true
 		do
-			if ! [[ "$cache" =~ ^[0-9]+$ ]]; then
+			if ! [[ "$cache" =~ ^-?[0-9]+$ ]]; then
 				warn "Cache must be a number"
 				need_input "Please enter a cache size (in MB):"
 				read cache
