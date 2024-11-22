@@ -96,26 +96,26 @@ while getopts "u:p:c:q:l:rbvx3oh" opt; do
 	p ) # process option password
 		password=${OPTARG}
 		;;
-	c ) # process option cache
-		cache=${OPTARG}
-		#Check if cache is a number
-		while true
-		do
-			if ! [[ "$cache" =~ ^-?[0-9]+$ ]]; then
-				warn "Cache must be a number"
-				need_input "Please enter a cache size (in MB):"
-				read cache
-			else
-				break
-			fi
-		done
-		#Converting the cache to qBittorrent's unit (MiB)
-		qb_cache=$cache
-		;;
-	q ) # process option cache
-		qb_install=1
-		qb_ver=("qBittorrent-${OPTARG}")
-		;;
+	# c ) # process option cache
+	# 	cache=${OPTARG}
+	# 	#Check if cache is a number
+	# 	while true
+	# 	do
+	# 		if ! [[ "$cache" =~ ^-?[0-9]+$ ]]; then
+	# 			warn "Cache must be a number"
+	# 			need_input "Please enter a cache size (in MB):"
+	# 			read cache
+	# 		else
+	# 			break
+	# 		fi
+	# 	done
+	# 	#Converting the cache to qBittorrent's unit (MiB)
+	# 	qb_cache=$cache
+	# 	;;
+	# q ) # process option cache
+	# 	qb_install=1
+	# 	qb_ver=("qBittorrent-${OPTARG}")
+	# 	;;
 	l ) # process option libtorrent
 		lib_ver=("libtorrent-${OPTARG}")
 		#Check if qBittorrent version is specified
